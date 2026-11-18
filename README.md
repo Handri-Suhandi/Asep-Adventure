@@ -1,5 +1,7 @@
 # 🌾 Asep Adventure
 
+🎮 **Live Demo:** [https://asep-adventure.vercel.app/](https://asep-adventure.vercel.app/)
+
 A pixel-art life simulation and exploration web game built with **React** and **Vite**.
 
 Created for the **Basic Web Programming** final project at **Universitas Multimedia Nusantara (UMN)**, 2025.
