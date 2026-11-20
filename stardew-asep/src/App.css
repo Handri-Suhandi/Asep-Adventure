@@ -72,9 +72,11 @@ button:hover {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  height: 100dvh;
   width: 100vw;
-  padding: 20px 30px;
+  padding: 16px 24px;
   background: #111;
+  box-sizing: border-box;
 }
 
 .top-bar {
@@ -136,8 +138,8 @@ button:hover {
   position: absolute;
   border: 2px solid #00bfff;
   border-radius: 50%;
-  width: 100px;
-  height: 100px;
+  width: clamp(52px, 12vw, 100px);
+  height: clamp(52px, 12vw, 100px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -163,7 +165,7 @@ button:hover {
   background: rgba(0, 0, 0, 0.4);
   border-radius: 50%;
   color: #fff;
-  font-size: 14px;
+  font-size: clamp(9px, 2vw, 14px);
   transition: background 0.3s ease, color 0.3s ease;
 }
 
@@ -177,11 +179,11 @@ button:hover {
   color: #000;
 }
 
-.loc-village { top: 45%; left: 60%; background-image: url('/gambar/village.webp'); }
-.loc-beach { bottom: 10%; right: 25%; background-image: url('/gambar/beach.webp'); }
-.loc-home { top: 35%; left: 35%; background-image: url('/gambar/home.webp'); }
-.loc-warteg { top: 40%; right: 15%; background-image: url('/gambar/warteg.webp'); }
-.loc-lake { bottom: 15%; left: 15%; background-image: url('/gambar/lake.webp'); }
+.loc-village { top: 45%; left: 56%; background-image: url('/gambar/village.webp'); }
+.loc-beach { bottom: 10%; right: 22%; background-image: url('/gambar/beach.webp'); }
+.loc-home { top: 35%; left: 34%; background-image: url('/gambar/home.webp'); }
+.loc-warteg { top: 38%; right: 10%; background-image: url('/gambar/warteg.webp'); }
+.loc-lake { bottom: 15%; left: 16%; background-image: url('/gambar/lake.webp'); }
 .loc-forest { top: 50%; left: 5%; background-image: url('/gambar/forest.webp'); }
 
 .player {
@@ -292,14 +294,6 @@ button:hover {
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   font-weight: bold;
-}
-
-@media (max-width: 768px) {
-  .container { width: 90vw; }
-  .main-area { flex-direction: column; gap: 10px; }
-  .side-panel { width: 100%; height: 280px; flex-shrink: 0; padding: 15px; }
-  .status { justify-content: space-between; }
-  .stat { width: 48%; margin-bottom: 10px; }
 }
 
 .enter-prompt {
@@ -624,4 +618,120 @@ button:hover {
 @keyframes popIn {
   from { transform: scale(0.5); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
+}
+
+@media (max-width: 768px) {
+  .game {
+    padding: 8px 10px;
+  }
+  .top-bar {
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+  .status {
+    margin: 4px 0 8px 0;
+    justify-content: space-between;
+  }
+  .stat {
+    width: 23%;
+    font-size: 11px;
+    margin-bottom: 0;
+  }
+  .progress {
+    height: 6px;
+    margin-top: 3px;
+  }
+  .fill {
+    height: 6px;
+  }
+  .main-area {
+    flex-direction: column;
+    gap: 8px;
+    overflow: hidden;
+  }
+  .game-arena {
+    flex: 1;
+    min-height: 180px;
+  }
+  .side-panel {
+    width: 100%;
+    height: auto;
+    max-height: 180px;
+    flex-shrink: 0;
+    padding: 8px 12px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    box-sizing: border-box;
+  }
+  .panel-info {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    overflow-y: auto;
+    text-align: left;
+  }
+  .panel-info h3 {
+    font-size: 13px;
+    margin-bottom: 4px !important;
+  }
+  .activity-buttons {
+    max-height: 70px;
+  }
+  .activity-buttons button {
+    padding: 6px 8px !important;
+    font-size: 11px;
+    margin: 3px 0 !important;
+  }
+  .inventory-section {
+    margin-top: 4px;
+    padding-top: 4px;
+  }
+  .inventory-section h4 {
+    font-size: 11px;
+    margin-bottom: 3px;
+  }
+  .inventory-grid {
+    gap: 4px;
+    max-height: 60px;
+  }
+  .inv-item {
+    padding: 2px 4px;
+    font-size: 10px;
+  }
+  .controls {
+    flex-shrink: 0;
+    gap: 3px;
+  }
+  .ctrl-btn {
+    width: 40px;
+    height: 40px;
+  }
+  .mid-controls {
+    gap: 24px;
+  }
+  .container {
+    width: 92vw;
+    padding: 20px 15px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .start-card {
+    padding: 25px 20px;
+    width: 92%;
+  }
+  .start-card h1 {
+    font-size: clamp(1.4rem, 6.2vw, 2.4rem);
+    white-space: nowrap;
+    margin-bottom: 15px;
+  }
+  .progress-container {
+    padding: 20px;
+    width: 90%;
+  }
+  .event-card {
+    width: 90%;
+    padding: 15px;
+  }
 }

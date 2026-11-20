@@ -49,9 +49,23 @@ function App() {
   const [activitiesDone, setActivitiesDone] = useState(new Set());
   const [lifetimeItems, setLifetimeItems] = useState(0);
   const [itemsUsedCount, setItemsUsedCount] = useState(0);
+  const [arenaScale, setArenaScale] = useState(1);
 
   const arenaRef = useRef(null);
   const keysPressed = useRef({});
+
+  useEffect(() => {
+    const updateScale = () => {
+      if (arenaRef.current) {
+        const { clientWidth, clientHeight } = arenaRef.current;
+        const s = Math.min(1, Math.min(clientWidth / 800, clientHeight / 520));
+        setArenaScale(Math.max(0.4, s));
+      }
+    };
+    updateScale();
+    window.addEventListener('resize', updateScale);
+    return () => window.removeEventListener('resize', updateScale);
+  }, [screen, isInside]);
 
   const adjustStat = (stat, value) => {
     setStats(prev => {
@@ -87,8 +101,8 @@ function App() {
   };
 
   const getCurrentAvatarSize = () => {
-    if (!isInside) return locationAvatarSizes["Map"];
-    return locationAvatarSizes[currentLocation] || 100;
+    const base = !isInside ? locationAvatarSizes["Map"] : (locationAvatarSizes[currentLocation] || 100);
+    return Math.max(32, Math.round(base * arenaScale));
   };
 
   const completeActivity = () => {
@@ -241,7 +255,15 @@ function App() {
     if (currentLocation && !isInside) {
       setLastMapPos(playerPos); 
       setIsInside(true);
-      const spawnPoint = locationSpawnPoints[currentLocation] || { x: 0, y: 200 };
+      const rawSpawn = locationSpawnPoints[currentLocation] || { x: 0, y: 150 };
+      const arenaEl = arenaRef.current;
+      const playerSize = getCurrentAvatarSize();
+      const maxY = arenaEl ? Math.max(20, (arenaEl.clientHeight / 2) - (playerSize / 2)) : 200;
+      const maxX = arenaEl ? Math.max(20, (arenaEl.clientWidth / 2) - (playerSize / 2)) : 200;
+      const spawnPoint = {
+        x: Math.max(-maxX * 0.8, Math.min(maxX * 0.8, Math.round(rawSpawn.x * arenaScale))),
+        y: Math.max(-maxY * 0.8, Math.min(maxY * 0.8, Math.round(rawSpawn.y * arenaScale)))
+      };
       setPlayerPos(spawnPoint); 
     }
   };
@@ -267,8 +289,8 @@ function App() {
     const { clientWidth, clientHeight } = arenaEl;
     const playerSize = getCurrentAvatarSize(); 
     const halfPlayer = playerSize / 2;
-    const maxX = (clientWidth / 2) - halfPlayer;
-    const maxY = (clientHeight / 2) - halfPlayer;
+    const maxX = Math.max(15, (clientWidth / 2) - halfPlayer);
+    const maxY = Math.max(15, (clientHeight / 2) - halfPlayer);
 
     setPlayerPos(prev => {
       let nextX = prev.x + dx;
@@ -405,14 +427,17 @@ function App() {
     const spots = locationActivitySpots[currentLocation];
     if (!spots) { setActiveSpot(null); return; }
     let foundSpot = null;
+    const maxDist = Math.max(65, 120 * arenaScale);
     spots.forEach(spot => {
-        const dist = Math.sqrt(Math.pow(playerPos.x - spot.x, 2) + Math.pow(playerPos.y - spot.y, 2));
-        if (dist < 120) foundSpot = spot; 
+        const sx = spot.x * arenaScale;
+        const sy = spot.y * arenaScale;
+        const dist = Math.sqrt(Math.pow(playerPos.x - sx, 2) + Math.pow(playerPos.y - sy, 2));
+        if (dist < maxDist) foundSpot = spot; 
     });
     if (activeSpot && foundSpot && activeSpot.id !== foundSpot.id) setShopMenu(null);
     if (!foundSpot) setShopMenu(null);
     setActiveSpot(foundSpot);
-  }, [playerPos, isInside, currentLocation]);
+  }, [playerPos, isInside, currentLocation, arenaScale]);
 
   const hours = Math.floor(gameMinutes / 60);
   const timeString = `${String(hours).padStart(2,'0')}:${String(gameMinutes % 60).padStart(2,'0')}`;
@@ -486,7 +511,9 @@ function App() {
     return <StartScreen avatars={avatars} avatarIndex={avatarIndex} setAvatarIndex={setAvatarIndex} playerName={playerName} setPlayerName={setPlayerName} onStart={() => {
         if(!playerName.trim()) return alert("Enter name!");
         setScreen('game'); setCurrentLocation('Home'); setIsInside(true);
-        setPlayerPos(locationSpawnPoints['Home']); setLastMapPos({ x: -120, y: -80 }); 
+        const startSpawn = locationSpawnPoints['Home'] || { x: 0, y: 150 };
+        setPlayerPos({ x: Math.round(startSpawn.x * arenaScale), y: Math.round(startSpawn.y * arenaScale) });
+        setLastMapPos({ x: Math.round(-120 * arenaScale), y: Math.round(-80 * arenaScale) }); 
         setGameWon(false);
         setWeather('sunny'); 
         setVisitedLocs(new Set()); setActivitiesDone(new Set()); setLifetimeItems(0); setItemsUsedCount(0);
@@ -560,7 +587,7 @@ function App() {
             isInside={isInside} currentLocation={currentLocation} backgroundStyle={backgroundStyle}
             locationActivitySpots={locationActivitySpots} playerPos={playerPos}
             avatars={avatars} avatarIndex={avatarIndex} visualAvatarStyle={visualAvatarStyle}
-            arenaRef={arenaRef}
+            arenaRef={arenaRef} arenaScale={arenaScale}
         >
         </GameArena>
 

@@ -6,9 +6,25 @@ const panel = ({
   exitArea, enterArea, doActivity, handleInteraction, useItem, setShopMenu,
   movePlayer 
 }) => {
+  const handleMoveStart = (dx, dy) => {
+    movePlayer(dx, dy);
+    const interval = setInterval(() => {
+      movePlayer(dx, dy);
+    }, 60);
+    const stop = () => {
+      clearInterval(interval);
+      window.removeEventListener('mouseup', stop);
+      window.removeEventListener('touchend', stop);
+      window.removeEventListener('touchcancel', stop);
+    };
+    window.addEventListener('mouseup', stop, { once: true });
+    window.addEventListener('touchend', stop, { once: true });
+    window.addEventListener('touchcancel', stop, { once: true });
+  };
+
   return (
     <div className="side-panel">
-      <div>
+      <div className="panel-info">
         <h3 style={{marginBottom: '10px', color: '#00ffff'}}>
           {isInside ? `Inside: ${currentLocation}` : (currentLocation ? `Near: ${currentLocation}` : 'Exploring...')}
         </h3>
@@ -114,12 +130,28 @@ const panel = ({
       </div>
 
       <div className="controls">
-         <button className="ctrl-btn btn-up" onClick={() => movePlayer(0, -20)}></button>
+         <button 
+           className="ctrl-btn btn-up" 
+           onMouseDown={() => handleMoveStart(0, -20)}
+           onTouchStart={(e) => { e.preventDefault(); handleMoveStart(0, -20); }}
+         ></button>
          <div className="mid-controls">
-           <button className="ctrl-btn btn-left" onClick={() => movePlayer(-20, 0)}></button>
-           <button className="ctrl-btn btn-right" onClick={() => movePlayer(20, 0)}></button>
+           <button 
+             className="ctrl-btn btn-left" 
+             onMouseDown={() => handleMoveStart(-20, 0)}
+             onTouchStart={(e) => { e.preventDefault(); handleMoveStart(-20, 0); }}
+           ></button>
+           <button 
+             className="ctrl-btn btn-right" 
+             onMouseDown={() => handleMoveStart(20, 0)}
+             onTouchStart={(e) => { e.preventDefault(); handleMoveStart(20, 0); }}
+           ></button>
          </div>
-         <button className="ctrl-btn btn-down" onClick={() => movePlayer(0, 20)}></button>
+         <button 
+           className="ctrl-btn btn-down" 
+           onMouseDown={() => handleMoveStart(0, 20)}
+           onTouchStart={(e) => { e.preventDefault(); handleMoveStart(0, 20); }}
+         ></button>
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import React from 'react';
 const  area = ({ 
   isInside, currentLocation, backgroundStyle, 
   locationActivitySpots, avatars, avatarIndex, visualAvatarStyle, 
-  arenaRef 
+  arenaRef, arenaScale = 1 
 }) => {
   return (
     <div className="game-arena" ref={arenaRef} style={backgroundStyle}>
@@ -16,19 +16,23 @@ const  area = ({
       ))}
 
       {isInside && currentLocation && locationActivitySpots[currentLocation] && 
-        locationActivitySpots[currentLocation].map(spot => (
-          <div 
-            key={spot.id}
-            className="interaction-zone"
-            style={{
-              top: `50%`, 
-              left: `50%`,
-              transform: `translate(calc(-50% + ${spot.x}px), calc(-50% + ${spot.y}px))`
-            }}
-          >
-            {spot.label}
-          </div>
-        ))
+        locationActivitySpots[currentLocation].map(spot => {
+          const scaledX = Math.round(spot.x * arenaScale);
+          const scaledY = Math.round(spot.y * arenaScale);
+          return (
+            <div 
+              key={spot.id}
+              className="interaction-zone"
+              style={{
+                top: `50%`, 
+                left: `50%`,
+                transform: `translate(calc(-50% + ${scaledX}px), calc(-50% + ${scaledY}px))`
+              }}
+            >
+              {spot.label}
+            </div>
+          );
+        })
       }
 
       <img 
